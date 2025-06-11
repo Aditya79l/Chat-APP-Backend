@@ -1,8 +1,11 @@
 const express = require("express");
 const Group = require("../models/GroupModel");
-const groupRouter = express.Router();
 const { protect, isAdmin } = require("../middlewares/authMiddleware");
+const { trusted } = require("mongoose");
 
+const groupRouter = express.Router();
+
+//Create a new group
 groupRouter.post("/", protect, isAdmin, async (req, res) => {
   try {
     const { name, description } = req.body;
@@ -35,7 +38,7 @@ groupRouter.get("/", protect, async (req, res) => {
   }
 });
 
-//Join Group
+//Join group
 groupRouter.post("/:groupId/join", protect, async (req, res) => {
   try {
     const group = await Group.findById(req.params.groupId);
@@ -55,4 +58,25 @@ groupRouter.post("/:groupId/join", protect, async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 });
+
+//leave a group
+groupRouter.post("/:groupId/leave", protect, async (req, res) => {
+  try {
+    const group = await Group.findById(req.params.groupId);
+    if (!group) {
+      return res.status(404).json({ message: "Group not found" });
+    }
+    if (!group.members.includes(req.user._id)) {
+      return res.status(400).json({ message: "Not a member of this group" });
+    }
+    group.members = group.members.filter((memberId) => {
+      return memberId.toString() !== req.user._id.toString();
+    });
+    await group.save();
+    res.json({ message: "Successfully left the group" });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
 module.exports = groupRouter;
