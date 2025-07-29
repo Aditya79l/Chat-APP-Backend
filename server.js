@@ -21,7 +21,15 @@ const io = socketio(server, {
   },
 });
 //middlewares
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "https://chat-app-frontend-git-main-aditya79ls-projects.vercel.app",
+      "https://chat-app-backend-n2mj.onrender.com",
+    ],
+    credentials: true,
+  })
+);
 app.use(express.json());
 //connect to db
 mongoose
