@@ -14,8 +14,7 @@ const app = express();
 const server = http.createServer(app);
 const io = socketio(server, {
   cors: {
-    origin:
-      "https://chat-app-frontend-git-main-aditya79ls-projects.vercel.app/",
+    origin: "https://circlchat.netlify.app",
     methods: ["GET", "POST"],
     credentials: true,
   },
@@ -24,7 +23,7 @@ const io = socketio(server, {
 app.use(
   cors({
     origin: [
-      "https://chat-app-frontend-git-main-aditya79ls-projects.vercel.app",
+      "https://circlchat.netlify.app",
       "https://chat-app-backend-n2mj.onrender.com",
     ],
     credentials: true,
